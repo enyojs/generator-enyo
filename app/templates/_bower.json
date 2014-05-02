@@ -1,0 +1,10 @@
+{
+	"name": "enyo-bootplate",
+	"version": "1.0.0",
+	"dependencies": {
+		"enyo":"<%= bootplate %>",
+		"enyo-layout":"<%= bootplate %>",
+		"enyo-onyx":"<%= bootplate %>"
+	}
+}
+
