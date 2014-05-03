@@ -3,7 +3,7 @@ var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var chalk = require('chalk');
-
+var fs = require('fs');
 
 var EnyoGenerator = module.exports = function EnyoGenerator(args, options) {
 	yeoman.generators.Base.apply(this, arguments);
@@ -25,7 +25,18 @@ var EnyoGenerator = module.exports = function EnyoGenerator(args, options) {
 	this.on("end", function () {
 		this.installDependencies({
 			skipInstall: this.options["skip-install"],
-			npm: false
+			npm: false,
+			callback: function() {
+				try {
+					if(fs.existsSync("lib/enyo") && !fs.existsSync("enyo")) {
+						fs.symlinkSync("lib/enyo", "enyo");
+					}
+				} catch(e) {
+					// samples may not function, but the bootplate should still
+					this.log.writeln("Warning: unable to symlink enyo directory");
+				}
+				
+			}
 		});
 	});
 };
