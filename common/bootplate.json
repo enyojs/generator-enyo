@@ -1,0 +1,57 @@
+{
+	"enyo": "enyojs/enyo",
+	"defaultVersion": "2.4.0",
+	"defaultMode": "onyx",
+	"modes": {
+		"onyx": [
+			"onyx",
+			"layout"
+		],
+		"moonstone": [
+			"layout",
+			"spotlight",
+			"moonstone",
+			"enyo-ilib",
+			"enyo-webos",
+			"enyo-cordova"
+		],
+		"sunstone": [
+			"layout",
+			"sunstone",
+			"enyo-ilib",
+			"enyo-webos",
+			"enyo-cordova"
+		],
+		"garnet": [
+			"garnet",
+			"enyo-ilib",
+			"enyo-webos",
+			"enyo-cordova"
+		],
+		"sampler": [
+			"onyx",
+			"layout",
+			"canvas",
+			"enyo-ilib",
+			"spotlight",
+			"moonstone"
+		]
+	},
+	"repos": {
+		"bootplate-onyx": "git@github.com:enyojs/bootplate.git",
+		"bootplate-moonstone": "git@github.com:enyojs/bootplate-moonstone.git",
+		"bootplate-sunstone": "git@github.com:enyojs/bootplate-sunstone.git",
+		"bootplate-garnet": "git@github.com:enyojs/bootplate-garnet.git",
+		"bootplate-sampler": "git@github.com:enyojs/sampler.git",
+		"layout": "git@github.com:enyojs/layout",
+		"onyx": "git@github.com:enyojs/onyx",
+		"canvas": "git@github.com:enyojs/canvas.git",
+		"spotlight": "git@github.com:enyojs/spotlight",
+		"moonstone": "git@github.com:enyojs/moonstone",
+		"sunstone": "git@github.com:enyojs/sunstone",
+		"garnet": "git@github.com:enyojs/garnet",
+		"enyo-ilib": "git@github.com:enyojs/enyo-ilib",
+		"enyo-webos": "git@github.com:enyojs/enyo-webos",
+		"enyo-cordova": "git@github.com:enyojs/enyo-cordova"
+	}
+}
