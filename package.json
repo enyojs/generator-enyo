@@ -43,14 +43,17 @@
     "webOS"
   ],
   "dependencies": {
-    "yeoman-generator": "~0.16.0",
-    "chalk": "~0.4.0"
+    "shelljs": "~0.3.0",
+    "yeoman-generator": "~0.18.0",
+    "yosay": "~1.0.0",
+    "chalk": "~0.5.1"
   },
   "devDependencies": {
     "mocha": "*"
   },
   "peerDependencies": {
     "yo": ">=1.0.0",
+    "bower": "*",
     "cordova": ">=3.0.0"
   }
 }
