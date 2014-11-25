@@ -89,7 +89,7 @@ if(bootplate) {
 	var realBootplate = fs.realpathSync(bootplate);
 	var cmdline = process.env.CORDOVA_CMDLINE || "";
 	if(cmdline.indexOf("-no-deploy")>=0 || cmdline.indexOf("-enyo-debug")>=0
-			|| (process.env.CORDOVA_PLATFORMS || process.env.CORDOVA_PLATFORMS==="webos")) {
+			|| (process.env.CORDOVA_PLATFORMS && process.env.CORDOVA_PLATFORMS==="webos")) {
 		updateWWW(realBootplate);
 	} else {
 		runBuildScript(realBootplate, function() {
