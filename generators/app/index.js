@@ -33,7 +33,7 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 				type: Boolean
 			});
 			this.option("cordova", {
-				desc: "Specify a JSON string or file to add to or override build settings",
+				desc: "Encapsulate bootplate within a Cordova project layer",
 				type: Boolean
 			});
 			this.option("config", {
