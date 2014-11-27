@@ -4,13 +4,18 @@
   "description": "Enyo bootplate Yeoman generator",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
-  "licenses": [{
-    "type": "Apache-2.0", "url": "http://www.apache.org/licenses/LICENSE-2.0"
-  }],
-  "maintainers": [{
-    "name": "Enyo JS Framework Team",
-    "web": "http://enyojs.com/"
-  }],
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
+  "maintainers": [
+    {
+      "name": "Enyo JS Framework Team",
+      "web": "http://enyojs.com/"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "http://github.com/enyojs/generator-enyo"
@@ -22,7 +27,10 @@
     "test": "mocha"
   },
   "files": [
-    "app"
+    "app",
+    "deploy",
+    "webos",
+    "lib"
   ],
   "keywords": [
     "enyo",
@@ -35,13 +43,17 @@
     "webOS"
   ],
   "dependencies": {
-    "yeoman-generator": "~0.16.0",
-    "chalk": "~0.4.0"
+    "shelljs": "~0.3.0",
+    "yeoman-generator": "~0.18.0",
+    "yosay": "~1.0.0",
+    "chalk": "~0.5.1"
   },
   "devDependencies": {
     "mocha": "*"
   },
   "peerDependencies": {
-    "yo": ">=1.0.0"
+    "yo": ">=1.0.0",
+    "bower": "*",
+    "cordova": ">=3.0.0"
   }
 }

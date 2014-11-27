@@ -1,4 +1,4 @@
-# generator-enyo [![Build Status](https://secure.travis-ci.org/jaycanuck/generator-enyo.png?branch=master)](https://travis-ci.org/enyojs/generator-enyo)
+# generator-enyo [![Build Status](https://secure.travis-ci.org/enyojs/generator-enyo.png?branch=master)](https://travis-ci.org/enyojs/generator-enyo)
 
 > [Yeoman](http://yeoman.io) generator
 

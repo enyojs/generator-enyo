@@ -1,0 +1,11 @@
+{
+	"id": "<%= id %>",
+	"version": "<%= ver %>",
+	"vendor": "<%= auth %>",
+	"type": "web",
+	"main": "index.html",
+	"title": "<%= name %>",
+	"icon": "icon.png",
+	"largeIcon": "largeIcon.png",
+	"uiRevision":2
+}
