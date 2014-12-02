@@ -22,7 +22,7 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 			});
 			this.option("remote", {
 				alias: "git",
-				desc: "Specific git address to install the library from",
+				desc: "Specific git address or bower package to install the library from",
 				type: String
 			});
 			this.option("library", {
@@ -66,7 +66,7 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 		this.param = {
 			path: this._findBootplate(),
 			name: this.library_name,
-			git: valStrOpt(this.options["remote"]) || valStrOpt(this.options["git"]),
+			remote: valStrOpt(this.options["remote"]) || valStrOpt(this.options["git"]),
 			version: valStrOpt(this.options["library"]) || valStrOpt(this.options["lib"]),
 			latest: this.options["latest"] || this.options["l"]
 		};
