@@ -61,7 +61,7 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 
 function resolveTag(version, defVersion, latest) {
 	var tag = "";
-	if(version && !latest) {
+	if(version) {
 		tag = "#" + version;
 	} else if(defVersion && !latest) {
 		tag = "#" + defVersion;
@@ -130,17 +130,21 @@ module.exports = {
 		opts.path = opts.path || process.cwd();
 		var conf = mixin(CONFIG, opts.config || {});
 		process.chdir(opts.path);
-		if(!opts.git) {
+		if(!opts.remote) {
 			if(conf.repos[opts.name]) {
-				opts.git = conf.repos[opts.name];
+				opts.remote = conf.repos[opts.name];
+				if(!CONFIG.repos[opts.name]) {
+					opts.latest = true;
+				}
 			} else {
 				callback(new Error(opts.name + " unable be resolved"));
-
 			}
+		} else {
+			opts.latest = true;
 		}
 		enyoVersion(function(version) {
 			var tag = resolveTag(opts.version, version, opts.latest);
-			bower.install(opts.git + tag, opts.name, function(err) {
+			bower.install(opts.remote + tag, opts.name, function(err) {
 				if(err) {
 					callback(err);
 				} else {
