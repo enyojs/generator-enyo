@@ -85,6 +85,22 @@ function enyoVersion(callback) {
 	}
 }
 
+function updateEnyo(tag, callback) {
+	bower.bowerrc(".", function(err) {
+		if(!err) {
+			bower.initialize([{name:ENYO_DIR, component:CONFIG.enyo + tag}], function(err2) {
+				if(err2) {
+					callback(err2);
+				} else {
+					bower.bowerrc(LIB_DIR, callback);
+				}
+			});
+		} else {
+			callback(err);
+		}
+	});
+}
+
 module.exports = {	
 	create: function(opts, callback) {
 		opts.path = opts.path || process.cwd();
@@ -174,6 +190,29 @@ module.exports = {
 			}
 		}
 		return repos;
+	},
+	update: function(opts, callback) {
+		opts.path = opts.path || process.cwd();
+		process.chdir(opts.path);
+		var tag = resolveTag(opts.version, CONFIG.defaultVersion, opts.latest);
+		if(fs.existsSync("bower.json")) {
+			shell.mv("-f", "bower.json", "bower.json.bak");
+			updateEnyo(tag, function(err) {
+				shell.mv("-f", "bower.json.bak", "bower.json");
+				if(!err) {
+					bower.updateTo(tag, function(name, component) {
+						return (CONFIG.repos[name] && CONFIG.repos[name]===component);
+					}, function(err2) {
+						callback(err2, tag);
+					});
+				} else {
+					callback(err, tag);
+				}
+			});
+		} else {
+			console.error("Bower.json is missing. What happened to bower.json? :(");
+			callback(new Error("Unable to read current dependencies."), tag);
+		}
 	},
 	deploy: function(opts, callback) {
 		if(!opts) opts = {};

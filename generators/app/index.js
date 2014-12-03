@@ -22,9 +22,9 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 				desc: "Configuration mode of bootplate (onyx, moonstone, sunstone, garnet, or sampler)",
 				type: String
 			});
-			this.option("bootplate", {
+			this.option("build", {
 				alias: "b",
-				desc: "Specify version of bootplate and libraries to use",
+				desc: "Version of bootplate and libraries to use (eg: --build=2.4.0)",
 				type: String
 			});
 			this.option("latest", {
@@ -59,7 +59,7 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 		this.param = {
 			path: this.path,
 			mode: valStrOpt(this.options["mode"]) || valStrOpt(this.options["m"]),
-			version: valStrOpt(this.options["bootplate"]) || valStrOpt(this.options["b"]),
+			version: valStrOpt(this.options["build"]) || valStrOpt(this.options["b"]),
 			latest: this.options["latest"] || this.options["l"]
 		};
 		if(this.param.version==="latest" || this.param.version==="edge" || this.param.version==="master"

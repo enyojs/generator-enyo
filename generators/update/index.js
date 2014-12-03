@@ -11,42 +11,21 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 		this.cwd = process.cwd();
 		try {
 			yeoman.generators.Base.apply(this, arguments);
-			this.option("remove", {
-				alias: "r",
-				desc: "Removes the named library, rather than installing",
-				type: Boolean
-			});
-			this.option("list", {
-				desc: "List all available named libraries",
-				type: Boolean
-			});
-			this.option("remote", {
-				alias: "git",
-				desc: "Specific git address or bower package to install the library from",
-				type: String
+			this.argument("path", {
+				desc:"Path to bootplate",
+				type: String,
+				required: false
 			});
 			this.option("build", {
 				alias: "b",
-				desc: "Version of the library to use (eg: --build=2.4.0)",
+				desc: "Version of enyo and first-party libraries to use (eg: --build=2.4.0)",
 				type: String
 			});
 			this.option("latest", {
 				alias: "l",
-				desc: "Use the latest version of the library",
+				desc: "Use the latest version of enyo and first-party libraries",
 				type: Boolean
 			});
-			this.option("config", {
-				alias: "c",
-				desc: "Specify a JSON file which adds to or overrides settings",
-				type: String
-			});
-			if(!this.options["list"]) {
-				this.argument("library_name", {
-					desc:"Name of the library to install",
-					type: String,
-					required: true
-				});
-			}
 		} catch(e) {
 			this.log(chalk.red(e));
 			process.exit(1);
@@ -62,11 +41,8 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 				return undefined;
 			}
 		};
-		
 		this.param = {
-			path: this._findBootplate(),
-			name: this.library_name,
-			remote: valStrOpt(this.options["remote"]) || valStrOpt(this.options["git"]),
+			path: this._findBootplate(valStrOpt(this.path)),
 			version: valStrOpt(this.options["build"]) || valStrOpt(this.options["b"]),
 			latest: this.options["latest"] || this.options["l"]
 		};
@@ -75,30 +51,15 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 			//resolve keywords to latest boolean
 			this.param.latest = true;
 		}
-		var conf = valStrOpt(this.options["config"]) || valStrOpt(this.options["c"]);
-		if(conf) {
-			try {
-				var txt = fs.readFileSync(conf, {encoding:"utf8"});
-				var obj = JSON.parse(txt);
-				param.config = obj;
-			} catch(e) {
-				this.log(chalk.red("Unable to read/parse config JSON."));
-				process.exit(2);
-			}
-		}
-		this.action = "addLib";
-		if(this.options["remove"] || this.options["r"]) {
-			this.action = "removeLib";
-		}
 	},
 
-	_findBootplate: function() {
-		var dir = process.cwd();
+	_findBootplate: function(dir) {
+		var dir = dir || process.cwd();
 		// 2-level deep search to detect an Enyo bootplate
 		var ENYO_DIR = "enyo";
 		var result;
 		if(fs.existsSync(path.join(dir, ENYO_DIR))) {
-			result = ".";
+			result = dir || ".";
 		} else {
 			try {
 				var files = fs.readdirSync(dir);
@@ -125,13 +86,16 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 		} else {
 			var log = this.log;
 			var done = this.async();
-			bootplate[this.action](this.param, function(err) {
+			bootplate.update(this.param, function(err, tag) {
 				log(" ");
 				if(err) {
 					if(err.message) {
 						log(err.message + "\n");
 					}
-					log(chalk.red("Error: Library action failed."));
+					log(chalk.red("Error: Bootplate update failed."));
+				} else {
+					log(chalk.green("Bootplate updated to " + (tag.replace("#", "") || "the latest version")
+							+ " successfully"));
 				}
 				done();
 			});

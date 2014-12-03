@@ -13,5 +13,6 @@ module.exports = {
 	addLib: bootplate.addLib,
 	removeLib: bootplate.removeLib,
 	listLibs: bootplate.listLibs,
+	update: bootplate.update,
 	deploy: bootplate.deploy
 };
