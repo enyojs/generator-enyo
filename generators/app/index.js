@@ -24,7 +24,7 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 			});
 			this.option("build", {
 				alias: "b",
-				desc: "Specify version of bootplate and libraries to use",
+				desc: "Version of bootplate and libraries to use (eg: --build=2.4.0)",
 				type: String
 			});
 			this.option("latest", {

@@ -27,7 +27,7 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 			});
 			this.option("build", {
 				alias: "b",
-				desc: "Specify version of the library to use",
+				desc: "Version of the library to use (eg: --build=2.4.0)",
 				type: String
 			});
 			this.option("latest", {
