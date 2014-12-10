@@ -1,6 +1,6 @@
 {
 	"enyo": "enyojs/enyo",
-	"defaultVersion": "2.4.0",
+	"defaultVersion": "2.5.1-rc.1",
 	"defaultMode": "onyx",
 	"modes": {
 		"onyx": [

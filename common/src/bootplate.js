@@ -21,7 +21,7 @@ var ONYX = "onyx",
 	SAMPLER = "sampler",
 	DEPLOY_SCRIPT = "tools" + path.sep + "deploy",
 	LIB_DIR = "lib",
-	BASE_DIR = "base",
+	BASE_DIR = "bootplate",
 	ENYO_DIR = "enyo",
 	UTF8 = "utf8",
 	CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, "../bootplate.json"), {encoding:"utf8"}));
@@ -31,8 +31,7 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 		if(err) {
 			callback(err);
 		} else {
-			var custStdio = [process.stdin, null, process.stderr];
-			var base = bower.installNoSave(bpGit + tag, BASE_DIR, custStdio, function(err2) {
+			bower.installNoSave(bpGit + tag, BASE_DIR, "inherit", function(err2) {
 				if(err2) {
 					console.error("Unable to setup base bootplate code.");
 					callback(err2);
@@ -40,6 +39,9 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 					shell.cp("-fr", BASE_DIR + "/*", ".");
 					shell.rm("-fr", path.join(BASE_DIR));
 					shell.rm("-f", path.join(".bower.json"));
+					if(fs.existsSync("README-CORDOVA-WEBOS.md")) {
+						shell.rm("-f", path.join("README-CORDOVA-WEBOS.md"));
+					}
 					bower.installNoSave(enyo + tag, ENYO_DIR, "inherit", function(err3) {
 						if(err3) {
 							console.error("Unable to setup enyo core framework.");
@@ -49,11 +51,6 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 						}
 					});
 				}
-			});
-			base.stdout.setEncoding(UTF8);
-			base.stdout.on("data", function (data) {
-				data = data.replace(/base/g, "");
-				process.stdout.write(data, UTF8);
 			});
 		}
 	})
@@ -90,7 +87,10 @@ function updateEnyo(tag, callback) {
 		if(!err) {
 			bower.initialize([{name:ENYO_DIR, component:CONFIG.enyo + tag}], function(err2) {
 				if(err2) {
-					callback(err2);
+					// revert to "lib" bower location on a failed updated
+					bower.bowerrc(LIB_DIR, function(err3) {
+						callback(err2);
+					});
 				} else {
 					bower.bowerrc(LIB_DIR, callback);
 				}

@@ -1,4 +1,4 @@
-# generator-enyo [![Build Status](https://secure.travis-ci.org/enyojs/generator-enyo.png?branch=master)](https://travis-ci.org/enyojs/generator-enyo)
+# generator-enyo
 
 > [Yeoman](http://yeoman.io) generator
 
@@ -7,40 +7,61 @@
 
 ### What is Yeoman?
 
-Trick question. It's not a thing. It's this guy:
+Yeoman is a highly configurable command line scaffolding tool for modern webapps. It makes big tasks simpler and prettier, such as creating and modifying webapp templates.
 
-![](http://i.imgur.com/JHaAlBJ.png)
-
-Basically, he wears a top hat, lives in your computer, and waits for you to tell him what kind of application you wish to create.
-
-Not every new computer comes with a Yeoman pre-installed. He lives in the [npm](https://npmjs.org) package repository. You only have to ask for him once, then he packs up and moves into your hard drive. *Make sure you clean up, he likes new and shiny things.*
+Yeoman can be found on [npm](https://npmjs.org) package repository.  Using additional packages, known as Yeoman generators, Yeoman can create virtually any kind of appliaction, such as Enyo, Backbone, or even Chrome extensions.
 
 ```
-$ npm install -g yo
+npm install -g yo
 ```
 
-### Yeoman Generators
+### Enyo bootplate generator
 
-Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
+This Enyo generator is a quick simple way to make an Enyo bootplate project.
 
 To install generator-enyo from npm, run:
 
 ```
-$ npm install -g generator-enyo
+npm install -g generator-enyo
 ```
 
-Finally, initiate the generator:
+From there, creating a new projects is as simple as
 
 ```
-$ yo enyo
+yo enyo MyApp
 ```
+An enyo bootplate, of the current release, will be created into the directory MyApp. Options are included to specify a particular build version, change to a particular mode configuration (onyx, moonstone, sampler, etc.) and more! The full list of options can be see via `yo enyo -h`
 
-### Getting To Know Yeoman
+### All the bells and whistles
 
-Yeoman has a heart of gold. He's a person with feelings and opinions, but he's very easy to work with. If you think he's too opinionated, he can be easily convinced.
+Beyond initial application creation, included are a number of subgenerators for post-creation usage, each with their own `-h` help messages outlining full options available.
 
-If you'd like to get to know Yeoman better and meet some of his friends, [Grunt](http://gruntjs.com) and [Bower](http://bower.io), check out the complete [Getting Started Guide](https://github.com/yeoman/yeoman/wiki/Getting-Started).
+  - `yo enyo:lib` is focused around adding and removing libraries, including remote ones on git repositories and bower packages
+  - `yo enyo:update` will update Enyo and first-party Enyo libraries to the current stable release (or a specific release)
+  - `yo enyo:deploy` deploys the bootplate project
+  - `yo enyo:webos` adds the webOS specific components (appinfo.json primarily)
 
+### Cordova integration
+
+Among the bootplate creation options is the `--cordova` flag, which creates a Cordova 3.x project with an Enyo bootplate within. Enyo bootplate is hooked up and setup build on any support platform via normal [Cordova CLI](http://cordova.apache.org/) operations. 2 handy Cordova project hooks are also provided. Whenever the Cordova `prepare` or `build` actions are used, these hooks run.
+
+ - **enyo-deploy-hook.js** - runs the minification deploy script in the bootplate, and updates the www directory symlink to point towards the deployed webapp directory. This allows the minified webapp to be used as the content copied over to each platform's local www directory.
+ - **enyo-deploy-cleanup-hook.js** - restores the www symlink to the original bootplate root after the prepare or build operator is completed
+
+These are completely hands-off hooks that automate the bootplate minification/deploy process inline with the standard cordova-cli operation flow.
+
+To skip the deploy process, using the uncompressed files for each platform, include the `--no-deploy` flag. For example:
+
+    cordova build --no-deploy
+
+##### Manual hook usage
+
+While generator-enyo usage to make an Enyo bootplate Cordova project is preferred, given it automates the process, you can manually copy the hooks from this repository into any Cordova project for the same bootplate deploying effect.
+
+ - common/hooks/enyo-deploy-hook.js to hooks/before_prepare/enyo-deploy-hook.js
+ - common/hooks/enyo-deploy-cleanup-hook.js to hooks/after_prepare/enyo-deploy-cleanup-hook.js
+
+If a bootplate is in the www directory, the hooks will run the deploy script. If a bootplate is in the project root, in a dedicated directory (for example "bootplate/"), and the www directory is empty or deleted, the hooks will detect this and setup the full smart deploying symlink technique mentioned above.
 
 ## License
 

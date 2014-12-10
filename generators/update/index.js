@@ -46,7 +46,7 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 			version: valStrOpt(this.options["build"]) || valStrOpt(this.options["b"]),
 			latest: this.options["latest"] || this.options["l"]
 		};
-		if(this.param.version==="latest" || this.param.version==="edge" || this.param.version==="master"
+		if(this.param.version==="latest" || this.param.version==="edge"
 				 || this.param.version==="nightly") {
 			//resolve keywords to latest boolean
 			this.param.latest = true;
