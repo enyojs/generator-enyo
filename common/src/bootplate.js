@@ -40,6 +40,9 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 					shell.cp("-fr", BASE_DIR + "/*", ".");
 					shell.rm("-fr", path.join(BASE_DIR));
 					shell.rm("-f", path.join(".bower.json"));
+					if(fs.existsSync("README-CORDOVA-WEBOS.md")) {
+						shell.rm("-f", path.join("README-CORDOVA-WEBOS.md"));
+					}
 					bower.installNoSave(enyo + tag, ENYO_DIR, "inherit", function(err3) {
 						if(err3) {
 							console.error("Unable to setup enyo core framework.");
