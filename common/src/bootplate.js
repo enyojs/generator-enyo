@@ -93,7 +93,10 @@ function updateEnyo(tag, callback) {
 		if(!err) {
 			bower.initialize([{name:ENYO_DIR, component:CONFIG.enyo + tag}], function(err2) {
 				if(err2) {
-					callback(err2);
+					// revert to "lib" bower location on a failed updated
+					bower.bowerrc(LIB_DIR, function(err3) {
+						callback(err2);
+					});
 				} else {
 					bower.bowerrc(LIB_DIR, callback);
 				}
