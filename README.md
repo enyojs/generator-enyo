@@ -43,7 +43,7 @@ Beyond initial application creation, included are a number of subgenerators for 
 
 ### Cordova integration
 
-Among the bootplate creation options is the `--cordova` flag, which creates a Cordova 3.x project with an Enyo bootplate within. Enyo bootplate is hooked up and setup build on any support platform via normal [Cordova CLI](http://cordova.apache.org/) operations. 2 handy Cordova project hooks are also provided. Whenever the Cordova `prepare` or `build` actions are used, these hooks run.
+Among the bootplate creation options is the `--cordova` flag, which creates a Cordova 3.x project with an Enyo bootplate within. Enyo bootplate is hooked up and setup to build on any supported platform via normal [Cordova CLI](http://cordova.apache.org/) operations. Two handy Cordova project hooks are also provided. Whenever the Cordova `prepare` or `build` actions are used, these hooks run.
 
  - **enyo-deploy-hook.js** - runs the minification deploy script in the bootplate, and updates the www directory symlink to point towards the deployed webapp directory. This allows the minified webapp to be used as the content copied over to each platform's local www directory.
  - **enyo-deploy-cleanup-hook.js** - restores the www symlink to the original bootplate root after the prepare or build operator is completed
