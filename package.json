@@ -1,6 +1,6 @@
 {
   "name": "generator-enyo",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Enyo bootplate Yeoman generator",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
@@ -18,7 +18,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/enyojs/generator-enyo"
+    "url": "https://github.com/enyojs/generator-enyo.git"
   },
   "engines": {
     "node": ">=0.10.0"
