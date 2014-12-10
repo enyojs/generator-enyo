@@ -27,10 +27,11 @@
     "test": "mocha"
   },
   "files": [
-    "app",
-    "deploy",
-    "webos",
-    "lib"
+    "common",
+    "generators",
+    "test",
+    "LICENSE-2.0.txt",
+    "README.md"
   ],
   "keywords": [
     "enyo",
