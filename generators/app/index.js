@@ -92,20 +92,33 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 	},
 
 	writing: function() {
-		var log = this.log;
+		var self = this;
 		var done = this.async();
 		bootplate[this.action](this.param, function(err, opts) {
-			log(" ");
+			self.log(" ");
 			if(err) {
 				if(err.message) {
-					log(err.message + "\n");
+					self.log(err.message + "\n");
 				}
-				log(chalk.red("Error: Bootplate generation failed."));
+				self.log(chalk.red("Error: Bootplate generation failed."));
+				done();
 			} else {
-				log(chalk.green("Bootplate generation completed successfully"));
-				log("Project available at " + path.resolve(opts.project || opts.path));
+				var project = path.resolve(opts.project || opts.path);
+				var success = function() {
+					self.log(chalk.green("Bootplate generation completed successfully"));
+					self.log("Project available at " + project);
+					done();
+				}
+				if(fs.existsSync(path.join(project, "package.json"))) {
+					self.installDependencies({
+						bower: false,
+						npm: true,
+						callback: success
+					});
+				} else {
+					success();
+				}
 			}
-			done();
 		});
 	}
 });
