@@ -41,10 +41,13 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 				type: String
 			});
 			if(!this.options["list"]) {
+				this.remoteLib = this._valStrOpt(this.options["remote"])
+						|| this._valStrOpt(this.options["git"]);
+				this.isBowerLib = /^[a-z0-9.\-]+$/.test(this.remoteLib || "");
 				this.argument("library_name", {
 					desc:"Name of the library to install",
 					type: String,
-					required: true
+					required: !this.isBowerLib
 				});
 			}
 		} catch(e) {
@@ -53,29 +56,33 @@ var EnyoGenerator = yeoman.generators.NamedBase.extend({
 		}
 	},
 
+	_valStrOpt: function(arg) {
+		if(arg && typeof arg==="string") {
+			return arg;
+		} else {
+			return undefined;
+		}
+	},
+
 	initializing: function() {
 		process.chdir(this.cwd);
-		var valStrOpt = function(arg) {
-			if(arg && typeof arg==="string") {
-				return arg;
-			} else {
-				return undefined;
-			}
-		};
-		
+		if(this.isBowerLib && !this.library_name) {
+			this.library_name = this.remoteLib;
+		}
+
 		this.param = {
 			path: this._findBootplate(),
 			name: this.library_name,
-			remote: valStrOpt(this.options["remote"]) || valStrOpt(this.options["git"]),
-			version: valStrOpt(this.options["build"]) || valStrOpt(this.options["b"]),
+			remote: this.remoteLib,
+			version: this._valStrOpt(this.options["build"]) || this._valStrOpt(this.options["b"]),
 			latest: this.options["latest"] || this.options["l"]
 		};
-		if(this.param.version==="latest" || this.param.version==="edge" || this.param.version==="master"
-				 || this.param.version==="nightly") {
+		if(this.param.version==="latest" || this.param.version==="edge"
+				|| this.param.version==="nightly") {
 			//resolve keywords to latest boolean
 			this.param.latest = true;
 		}
-		var conf = valStrOpt(this.options["config"]) || valStrOpt(this.options["c"]);
+		var conf = this._valStrOpt(this.options["config"]) || this._valStrOpt(this.options["c"]);
 		if(conf) {
 			try {
 				var txt = fs.readFileSync(conf, {encoding:"utf8"});
