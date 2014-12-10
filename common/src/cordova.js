@@ -21,9 +21,9 @@ var BOOTPLATE_DIR = "bootplate",
 
 function iconSetup(project, mode) {
 	var key = "</widget>";
-	var addition = "    <icon src=\"icon.png\" />";
+	var addition = "    <icon src=\"icon.png\" />\n    <icon src=\"icon.png\" width=\"128\" height=\"128\" />";
 	if(mode===SAMPLER_MODE) {
-		shell.mkdir("-p", path.join(project, "www/assets/icons"));
+		shell.mkdir("-p", path.join(project, "icons"));
 		var map = [
 			path.join(project, "www/projects/Android/res/drawable-ldpi/ic_launcher.png"),
 			path.join(project, "www/projects/Android/res/drawable-mdpi/ic_launcher.png"),
@@ -37,7 +37,7 @@ function iconSetup(project, mode) {
 		];
 		for(var i=0; i<map.length; i++) {
 			if(fs.existsSync(map[i])) {
-				shell.mv("-f", map[i], path.join(project, "www/assets/icons/" + SAMPLER_ICONS[i]));
+				shell.mv("-f", map[i], path.join(project, "icons/" + SAMPLER_ICONS[i]));
 			}
 		}
 		shell.rm("-fr", path.join(project, "www/projects"));
@@ -46,6 +46,11 @@ function iconSetup(project, mode) {
 			addition = iconXml;
 		} catch(e) {
 			console.error("Error: Unable to import sampler icon configuration into config.xml");
+		}
+	} else {
+		var defaultIcon = path.join(project, "www/icon.png");
+		if(fs.existsSync(defaultIcon)) {
+			shell.cp("-f", defaultIcon, path.join(project, "icon.png"));
 		}
 	}
 	shell.sed("-i", key, addition + "\n" + key, path.join(project, "config.xml"));
