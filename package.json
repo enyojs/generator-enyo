@@ -1,6 +1,6 @@
 {
   "name": "generator-enyo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Enyo bootplate Yeoman generator",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
