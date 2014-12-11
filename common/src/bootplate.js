@@ -42,14 +42,27 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 					if(fs.existsSync("README-CORDOVA-WEBOS.md")) {
 						shell.rm("-f", path.join("README-CORDOVA-WEBOS.md"));
 					}
-					bower.installNoSave(enyo + tag, ENYO_DIR, "inherit", function(err3) {
-						if(err3) {
-							console.error("Unable to setup enyo core framework.");
-							callback(err3);
-						} else {
-							bower.bowerrc(LIB_DIR, callback);
-						}
-					});
+					var installEnyo = function() {
+						bower.installNoSave(enyo + tag, ENYO_DIR, "inherit", function(err3) {
+							if(err3) {
+								console.error("Unable to setup enyo core framework.");
+								callback(err3);
+							} else {
+								bower.bowerrc(LIB_DIR, callback);
+							}
+						});
+					}
+					if(fs.existsSync("package.json")) {
+						exec.npm_install("inherit", function(err3) {
+							if(err3) {
+								console.warn("Unable to npm install dependencies; try running the command yourself")
+							}
+							console.log(" ");
+							installEnyo()
+						});
+					} else {
+						installEnyo();
+					}
 				}
 			});
 		}
