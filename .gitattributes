@@ -1,0 +1,3 @@
+* text=auto
+/common/hooks/enyo-deploy-hook.js text eol=lf
+/common/hooks/enyo-deploy-cleanup-hook.js text eol=lf
