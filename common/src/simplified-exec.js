@@ -16,10 +16,20 @@ var exec = function(cmd, args, stdio, callback) {
 		}
 		callback && callback(err);
 	});
+	child.on("error", function(err) {
+		var obj = args[0];
+		if(IS_WINDOWS) {
+			obj = args[1];
+		}
+		callback(new Error("Error: Unable to run " + obj));
+	});
 	return child;
 }
 
 module.exports = {
+	npm_install: function(stdio, callback) {
+		return module.exports.npm("npm", ["install", "-q", "."], stdio, callback);
+	},
 	npm: function(cmd, args, stdio, callback) {
 		if (IS_WINDOWS) {
 			args.unshift("/c", cmd);
