@@ -11,10 +11,6 @@ Yeoman is a highly configurable command line scaffolding tool for modern webapps
 
 Yeoman can be found on [npm](https://npmjs.org) package repository.  Using additional packages, known as Yeoman generators, Yeoman can create virtually any kind of appliaction, such as Enyo, Backbone, or even Chrome extensions.
 
-```
-npm install -g yo
-```
-
 ### Enyo bootplate generator
 
 This Enyo generator is a quick simple way to make an Enyo bootplate project.
@@ -25,7 +21,7 @@ To install generator-enyo from npm, run:
 npm install -g generator-enyo
 ```
 
-From there, creating a new projects is as simple as
+As a plus, it will install Yeoman if you don't already have it. From there, creating a new projects is as simple as:
 
 ```
 yo enyo MyApp
