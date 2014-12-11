@@ -104,7 +104,7 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 				done();
 			} else {
 				self.log(chalk.green("Bootplate generation completed successfully"));
-				self.log("Project available at " + (opts.project || opts.path));
+				self.log("Project available at " + path.resolve(opts.project || opts.path));
 				done();
 				
 			}
