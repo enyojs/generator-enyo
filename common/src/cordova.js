@@ -19,6 +19,14 @@ var BOOTPLATE_DIR = "bootplate",
 	BEFORE_PREPARE_HOOK = path.join(__dirname, "../hooks/enyo-deploy-hook.js"),
 	AFTER_PREPARE_HOOK = path.join(__dirname, "../hooks/enyo-deploy-cleanup-hook.js");
 
+function symlinkWWW(realPath, link) {
+	try {
+		fs.symlinkSync(realPath, link, "dir");
+	} catch(e) {
+		fs.symlinkSync(realPath, link, "junction");
+	}
+}
+
 function iconSetup(project, mode) {
 	var key = "</widget>";
 	var addition = "    <icon src=\"icon.png\" />\n    <icon src=\"icon.png\" width=\"128\" height=\"128\" />";
@@ -91,7 +99,7 @@ module.exports = {
 							console.log("Symlinking bootplate to www...");
 							var www = path.join(rOpts.path, "..", "www");
 							shell.rm("-fr", www);
-							fs.symlinkSync(path.resolve(rOpts.path), www, 'dir');
+							symlinkWWW(path.resolve(rOpts.path), www);
 							iconSetup(opts.project, rOpts.mode);
 							hookSetup(opts.project);
 							injectScriptTag(path.join(rOpts.path, "debug.html"));
