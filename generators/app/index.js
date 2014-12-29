@@ -19,7 +19,7 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 			});
 			this.option("mode", {
 				alias: "m",
-				desc: "Configuration mode of bootplate (onyx, moonstone, sunstone, garnet, or sampler)",
+				desc: "Configuration mode of bootplate (onyx, moonstone, sampler, etc.)",
 				type: String
 			});
 			this.option("build", {

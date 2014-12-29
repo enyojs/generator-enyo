@@ -80,7 +80,12 @@ function updateWWW(dir) {
 		fs.rmdirSync(WWW);
 	}
 	if(!fs.existsSync(WWW)) {
-		fs.symlinkSync(path.resolve(dir), WWW, 'dir');
+		try {
+			fs.symlinkSync(path.resolve(dir), WWW, 'dir');
+		} catch(e) {
+			fs.symlinkSync(path.resolve(dir), WWW, 'junction');
+		}
+		
 	}
 }
 

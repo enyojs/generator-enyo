@@ -160,13 +160,14 @@ module.exports = {
 		var conf = mixin(CONFIG, opts.config || {});
 		process.chdir(opts.path);
 		if(!opts.remote) {
-			if(conf.repos[opts.name]) {
-				opts.remote = conf.repos[opts.name];
-				if(!CONFIG.repos[opts.name]) {
+			if(conf.repos[opts.name] || conf.repos["enyo-" + opts.name]) {
+				opts.remote = conf.repos[opts.name] || conf.repos["enyo-" + opts.name];
+				if(!(CONFIG.repos[opts.name] || CONFIG.repos["enyo-" + opts.name])) {
 					opts.latest = true;
 				}
 			} else {
 				callback(new Error(opts.name + " unable be resolved"));
+				return;
 			}
 		} else {
 			opts.latest = true;
@@ -185,6 +186,10 @@ module.exports = {
 	removeLib: function(opts, callback) {
 		opts.path = opts.path || process.cwd();
 		process.chdir(opts.path);
+		if(!fs.existsSync(path.join(LIB_DIR, opts.name))
+				&& fs.existsSync(path.join(LIB_DIR, "enyo-" + opts.name))) {
+			opts.name = "enyo-" + opts.name;
+		}
 		bower.uninstall(opts.name, function(err) {
 			if(err) {
 				callback(err);
@@ -196,8 +201,9 @@ module.exports = {
 	listLibs: function(custConfig) {
 		var conf = mixin(CONFIG, custConfig || {});
 		var repos = Object.keys(conf.repos);
+		var ignored = ["garnet", "sunstone"];
 		for(var i=0; i<repos.length; i++) {
-			if(repos[i].indexOf("bootplate-")===0) {
+			if(repos[i].indexOf("bootplate-")===0 || ignored.indexOf(repos[i])>-1) {
 				repos.splice(i, 1);
 				i--;
 			}
