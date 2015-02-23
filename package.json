@@ -1,6 +1,6 @@
 {
   "name": "generator-enyo",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Enyo bootplate Yeoman generator",
   "homepage": "http://enyojs.com/",
   "bugs": "http://jira.enyojs.com/",
@@ -45,9 +45,9 @@
   ],
   "dependencies": {
     "shelljs": "~0.3.0",
-    "yeoman-generator": "~0.18.0",
-    "yosay": "~1.0.0",
-    "chalk": "~0.5.1"
+    "yeoman-generator": "~0.18.9",
+    "yosay": "~1.0.2",
+    "chalk": "~1.0.0"
   },
   "devDependencies": {
     "mocha": "*"
