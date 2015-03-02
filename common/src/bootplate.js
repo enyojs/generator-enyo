@@ -139,14 +139,16 @@ function updateBootplate(repo, callback) {
 					});
 				} else {
 					var updatable = [
-						{name:"tools", path: BASE_DIR + "/tools/*", dest:"tools"},
-						{name:"tasks", path: BASE_DIR + "/tasks/*", dest:"tasks"},
+						{name:"tools", path: BASE_DIR + "/tools/*", dest:"tools", overwrite:true},
+						{name:"tasks", path: BASE_DIR + "/tasks/*", dest:"tasks", overwrite:true},
 						{name:"gruntfile.js", path: BASE_DIR + "/gruntfile.js", dest:"."},
 						{name:"package.json", path: BASE_DIR + "/package.json", dest:"."}
 					];
 					updatable.forEach(function(entry, index) {
 						if(fs.existsSync(path.join(BASE_DIR, entry.name))) {
-							shell.cp("-fr", entry.path, entry.dest);
+							if(!fs.existsSync(entry.name) || entry.overwrite) {
+								shell.cp("-fr", entry.path, entry.dest);
+							}
 						} else {
 							shell.rm("-fr", entry.name);
 						}
