@@ -115,17 +115,13 @@ function updateEnyo(tag, callback) {
 }
 
 function bootplateType() {
-	if(fs.existsSync(path.join(LIB_DIR, ONYX))) {
-		return ONYX;
-	} else if(fs.existsSync(path.join(LIB_DIR, MOONSTONE))) {
-		return MOONSTONE;
-	} else if(fs.existsSync(path.join(LIB_DIR, SUNSTONE))) {
-		return SUNSTONE;
-	} else if(fs.existsSync(path.join(LIB_DIR, GARNET))) {
-		return GARNET;
-	} else {
-		return ONYX;
+	var TYPES = [ONYX, MOONSTONE, SUNSTONE, GARNET];
+	for(var i=0; i<TYPES.length; i++) {
+		if(fs.existsSync(path.join(LIB_DIR, TYPES[i]))) {
+			return TYPES[i];
+		}
 	}
+	return ONYX;
 }
 
 function updateBootplate(repo, callback) {
