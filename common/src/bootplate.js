@@ -37,8 +37,8 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 					callback(err2);
 				} else {
 					shell.cp("-fr", BASE_DIR + "/*", ".");
-					shell.rm("-fr", path.join(BASE_DIR));
-					shell.rm("-f", path.join(".bower.json"));
+					shell.rm("-fr", BASE_DIR);
+					shell.rm("-f", ".bower.json");
 					if(fs.existsSync("README-CORDOVA-WEBOS.md")) {
 						shell.rm("-f", path.join("README-CORDOVA-WEBOS.md"));
 					}
@@ -114,12 +114,73 @@ function updateEnyo(tag, callback) {
 	});
 }
 
+function bootplateType() {
+	var TYPES = [ONYX, MOONSTONE, SUNSTONE, GARNET];
+	for(var i=0; i<TYPES.length; i++) {
+		if(fs.existsSync(path.join(LIB_DIR, TYPES[i]))) {
+			return TYPES[i];
+		}
+	}
+	return ONYX;
+}
+
+function updateBootplate(repo, callback) {
+	bower.bowerrc(".", function(err) {
+		if(!err) {
+			bower.installNoSave(repo, BASE_DIR, "inherit", function(err2) {
+				if(err2) {
+					// revert to "lib" bower location on a failed updated
+					bower.bowerrc(LIB_DIR, function(err3) {
+						callback(err2);
+					});
+				} else {
+					var updatable = [
+						{name:"tools", path: BASE_DIR + "/tools/*", dest:"tools", overwrite:true},
+						{name:"tasks", path: BASE_DIR + "/tasks/*", dest:"tasks", overwrite:true},
+						{name:"gruntfile.js", path: BASE_DIR + "/gruntfile.js", dest:"."},
+						{name:"package.json", path: BASE_DIR + "/package.json", dest:"."}
+					];
+					updatable.forEach(function(entry, index) {
+						if(fs.existsSync(path.join(BASE_DIR, entry.name))) {
+							if(!fs.existsSync(entry.name) || entry.overwrite) {
+								shell.cp("-fr", entry.path, entry.dest);
+							}
+						} else {
+							shell.rm("-fr", entry.name);
+						}
+					});
+					shell.rm("-fr", BASE_DIR);
+					if(fs.existsSync("package.json")) {
+						exec.npm_install("inherit", function(err3) {
+							if(err3) {
+								console.warn("Unable to npm install dependencies; try running the command yourself")
+							}
+							bower.bowerrc(LIB_DIR, callback);
+						});
+					} else {
+						if(fs.existsSync("node_modules")) {
+							shell.rm("-fr", "node_modules");
+						}
+						bower.bowerrc(LIB_DIR, callback);
+					}
+				}
+			});
+		} else {
+			callback(err);
+		}
+	});
+}
+
 module.exports = {	
 	create: function(opts, callback) {
 		opts.path = opts.path || process.cwd();
 		var conf = mixin(CONFIG, opts.config || {});
 		opts.mode = opts.mode || conf.defaultMode;
 		var cwd = process.cwd();
+		if(opts.mode && conf.repos["bootplate-" + opts.mode]
+				&& (opts.mode==GARNET || opts.mode==SUNSTONE) && !opts.version) {
+			opts.latest = true;
+		}
 		var tag = resolveTag(opts.version, conf.defaultVersion, opts.latest);
 		shell.mkdir("-p", path.join(opts.path, LIB_DIR));
 		process.chdir(opts.path);		
@@ -212,21 +273,35 @@ module.exports = {
 	},
 	update: function(opts, callback) {
 		opts.path = opts.path || process.cwd();
+		var conf = mixin(CONFIG, opts.config || {});
 		process.chdir(opts.path);
-		var tag = resolveTag(opts.version, CONFIG.defaultVersion, opts.latest);
+		var mode = bootplateType();
+		if(conf.repos["bootplate-" + opts.mode] && (mode==GARNET || mode==SUNSTONE)
+				&& !opts.version) {
+			opts.latest = true;
+		}
+		var tag = resolveTag(opts.version, conf.defaultVersion, opts.latest);
 		if(fs.existsSync("bower.json")) {
 			shell.mv("-f", "bower.json", "bower.json.bak");
-			updateEnyo(tag, function(err) {
-				shell.mv("-f", "bower.json.bak", "bower.json");
+			updateBootplate(conf.repos["bootplate-" + mode] + tag, function(err) {
 				if(!err) {
-					bower.updateTo(tag, function(name, component) {
-						return (CONFIG.repos[name] && CONFIG.repos[name]===component);
-					}, function(err2) {
-						callback(err2, tag);
+					updateEnyo(tag, function(err2) {
+						shell.mv("-f", "bower.json.bak", "bower.json");
+						if(!err2) {
+							bower.updateTo(tag, function(name, component) {
+								return (CONFIG.repos[name] && CONFIG.repos[name]===component);
+							}, function(err3) {
+								callback(err3, tag);
+							});
+						} else {
+							callback(err2, tag);
+						}
 					});
 				} else {
+					shell.mv("-f", "bower.json.bak", "bower.json");
 					callback(err, tag);
 				}
+				
 			});
 		} else {
 			console.error("Bower.json is missing. What happened to bower.json? :(");
