@@ -44,9 +44,9 @@
     "webOS"
   ],
   "dependencies": {
-    "shelljs": "~0.3.0",
-    "yeoman-generator": "~0.18.9",
-    "yosay": "~1.0.2",
+    "shelljs": "~0.4.0",
+    "yeoman-generator": "~0.18.10",
+    "yosay": "~1.0.3",
     "chalk": "~1.0.0"
   },
   "devDependencies": {

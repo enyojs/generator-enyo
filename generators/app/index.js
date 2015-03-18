@@ -51,6 +51,10 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 		process.chdir(this.cwd);
 		var valStrOpt = function(arg) {
 			if(arg && typeof arg==="string") {
+				// temporary fix for 3rd party parsing issue
+				if(arg.indexOf("=")===0) {
+					return arg.substring(1);
+				}
 				return arg;
 			} else {
 				return undefined;

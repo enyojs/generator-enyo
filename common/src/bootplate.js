@@ -12,6 +12,7 @@ var fs = require('fs'),
 	mixin = require("./mixin.js"),
 	bower = require('./bower.js'),
 	libmgr = require('./libmgr.js'),
+	migration = require('./migration.js'),
 	exec = require("./simplified-exec.js");
 
 var ONYX = "onyx",
@@ -22,7 +23,8 @@ var ONYX = "onyx",
 	DEPLOY_SCRIPT = "tools" + path.sep + "deploy",
 	LIB_DIR = "lib",
 	BASE_DIR = "bootplate",
-	ENYO_DIR = "enyo",
+	OLD_ENYO_DIR = "enyo",
+	ENYO_DIR = "lib/enyo",
 	UTF8 = "utf8",
 	CONFIG = JSON.parse(fs.readFileSync(path.join(__dirname, "../bootplate.json"), {encoding:"utf8"}));
 
@@ -43,14 +45,19 @@ function baseSetup(dir, bpGit, enyo, tag, callback) {
 						shell.rm("-f", path.join("README-CORDOVA-WEBOS.md"));
 					}
 					var installEnyo = function() {
-						bower.installNoSave(enyo + tag, ENYO_DIR, "inherit", function(err3) {
-							if(err3) {
-								console.error("Unable to setup enyo core framework.");
-								callback(err3);
-							} else {
-								bower.bowerrc(LIB_DIR, callback);
-							}
-						});
+						// old location enyo install to /enyo/
+						if(enyo) {
+							bower.installNoSave(enyo + tag, OLD_ENYO_DIR, "inherit", function(err3) {
+								if(err3) {
+									console.error("Unable to setup enyo core framework.");
+									callback(err3);
+								} else {
+									bower.bowerrc(LIB_DIR, callback);
+								}
+							});
+						} else {
+							callback();
+						}
 					}
 					if(fs.existsSync("package.json")) {
 						exec.npm_install("inherit", function(err3) {
@@ -80,7 +87,11 @@ function resolveTag(version, defVersion, latest) {
 }
 
 function enyoVersion(callback) {
-	var enyoBowerJSON = path.join("enyo/.bower.json");
+	var enyoPath = ENYO_DIR;
+	if(fs.existsSync(OLD_ENYO_DIR)) {
+		enyoPath = OLD_ENYO_DIR
+	}
+	var enyoBowerJSON = path.join(enyoPath, ".bower.json");
 	if(fs.existsSync(enyoBowerJSON)) {
 		fs.readFile(enyoBowerJSON, {encoding:"utf8"}, function(err, data) {
 			try {
@@ -98,7 +109,7 @@ function enyoVersion(callback) {
 function updateEnyo(tag, callback) {
 	bower.bowerrc(".", function(err) {
 		if(!err) {
-			bower.initialize([{name:ENYO_DIR, component:CONFIG.enyo + tag}], function(err2) {
+			bower.initialize([{name:OLD_ENYO_DIR, component:CONFIG.enyo + tag}], function(err2) {
 				if(err2) {
 					// revert to "lib" bower location on a failed updated
 					bower.bowerrc(LIB_DIR, function(err3) {
@@ -185,12 +196,16 @@ module.exports = {
 		shell.mkdir("-p", path.join(opts.path, LIB_DIR));
 		process.chdir(opts.path);		
 		var base = conf.repos["bootplate-" + opts.mode] || conf.repos["bootplate-" + conf.defaultMode];
-		if(!fs.existsSync(ENYO_DIR)) {
-			baseSetup(opts.path, base, conf.enyo, tag, function(err) {
+		if(!fs.existsSync(ENYO_DIR) && !fs.existsSync(OLD_ENYO_DIR)) {
+			var libBased = migration.libBased(opts.version || conf.defaultVersion, opts.latest);
+			baseSetup(opts.path, base, (!libBased ? conf.enyo : undefined), tag, function(err) {
 				if(err) {
 					callback(err);
 				} else {
 					var depends = [];
+					if(libBased) {
+						depends.push({name:"enyo", component:conf.enyo + tag});
+					}
 					if(conf.modes[opts.mode]) {
 						for(var i=0; i<conf.modes[opts.mode].length; i++) {	
 							var name = conf.modes[opts.mode][i];
@@ -204,6 +219,7 @@ module.exports = {
 							console.error("Unable to setup bootplate libraries.")
 							callback(err2);
 						} else {
+							migration.migrate(libBased, conf.enyo + tag);
 							libmgr.initialize(conf.modes[opts.mode] || [], function(err3) {
 								process.chdir(cwd);
 								callback(err3, opts);
@@ -281,22 +297,34 @@ module.exports = {
 			opts.latest = true;
 		}
 		var tag = resolveTag(opts.version, conf.defaultVersion, opts.latest);
+		var libBased = migration.libBased(opts.version || conf.defaultVersion, opts.latest);
 		if(fs.existsSync("bower.json")) {
 			shell.mv("-f", "bower.json", "bower.json.bak");
 			updateBootplate(conf.repos["bootplate-" + mode] + tag, function(err) {
 				if(!err) {
-					updateEnyo(tag, function(err2) {
+					if(libBased) {
 						shell.mv("-f", "bower.json.bak", "bower.json");
-						if(!err2) {
-							bower.updateTo(tag, function(name, component) {
-								return (CONFIG.repos[name] && CONFIG.repos[name]===component);
-							}, function(err3) {
-								callback(err3, tag);
-							});
-						} else {
-							callback(err2, tag);
-						}
-					});
+						migration.migrate(libBased, conf.enyo + tag);
+						bower.updateTo(tag, function(name, component) {
+							return (CONFIG.repos[name] && CONFIG.repos[name]===component);
+						}, function(err3) {
+							callback(err3, tag);
+						});
+					} else {
+						updateEnyo(tag, function(err2) {
+							shell.mv("-f", "bower.json.bak", "bower.json");
+							if(!err2) {
+								migration.migrate(libBased, conf.enyo + tag);
+								bower.updateTo(tag, function(name, component) {
+									return (CONFIG.repos[name] && CONFIG.repos[name]===component);
+								}, function(err3) {
+									callback(err3, tag);
+								});
+							} else {
+								callback(err2, tag);
+							}
+						});
+					}
 				} else {
 					shell.mv("-f", "bower.json.bak", "bower.json");
 					callback(err, tag);

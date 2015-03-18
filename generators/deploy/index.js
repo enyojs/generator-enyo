@@ -24,17 +24,20 @@ var EnyoGenerator = yeoman.generators.Base.extend({
 	},
 	
 	_findBootplate: function(dir) {
+		var dir = dir || process.cwd();
 		// 2-level deep search to detect an Enyo bootplate
-		var ENYO_DIR = "enyo";
+		var ENYO_DIR = "lib/enyo";
+		var OLD_ENYO_DIR = "enyo";
 		var result;
-		if(fs.existsSync(path.join(dir, ENYO_DIR))) {
-			result = dir;
+		if(fs.existsSync(path.join(dir, ENYO_DIR)) || fs.existsSync(path.join(dir, OLD_ENYO_DIR))) {
+			result = dir || ".";
 		} else {
 			try {
 				var files = fs.readdirSync(dir);
 				for(var i=0; i<files.length; i++) {
-					if(fs.existsSync(path.join(dir, files[i], ENYO_DIR))) {
-						result = path.join(dir, files[i]);
+					if(fs.existsSync(path.join(dir, files[i], ENYO_DIR))
+							|| fs.existsSync(path.join(dir, files[i], OLD_ENYO_DIR))) {
+						result = files[i];
 						break;
 					}
 				}
